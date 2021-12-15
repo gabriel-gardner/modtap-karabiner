@@ -1,0 +1,118 @@
+;Mod-Tap Layers example
+
+{
+ :profiles {
+            :Default {
+                      :default true
+
+                      ; simultaneous_threshold_milliseconds (def: 50)
+                      ; different from simlayers, this is for cases like [:a :b]
+                      :sim     50
+
+                      ; to_delayed_action_delay_milliseconds
+                      ; NOTE: this should be equal to :held for mod-tap layers
+                      :delay   190
+
+                      ; to_if_held_down_threshold_milliseconds (def: 500)
+                      ; NOTE: this should be equal to :delay for mod-tap layers
+                      :held    190
+
+                      ; to_if_alone_timeout_milliseconds (def: 1000)
+                      ; NOTE: (i think) this must be just less than the delay / held value to avoid bug where mod-tap layer stays 1
+                      :alone   189
+
+                      ;you can set these delays individually in mod-tap layer definitions if you want separate default values here 
+                      }
+            }
+
+ :templates {
+             :notify "osascript -e 'display notification \"%s\"'"
+             }
+
+ :main [ 
+
+        ;NOTE: When adding a new layer, if you want it to be able to cross with an old one, you must add the name negated (:!new_name) to all other mod-tap layer conditions
+        {
+         :des "mod-tap layers"
+         :rules [
+                 ;n-mode
+                 [:n nil [:!t-mode :!o-mode :!d-mode :!m-mode]
+                  {:alone {:key :n :halt true} :delayed {:canceled {:key :n}} :held {:set ["n-mode" 1] :repeat false} :afterup {:set ["n-mode" 0]}
+                   ;if want to define ms delays here
+                   ;:params {:alone 199 :held 200 :delay 200} 
+                   }]
+
+                 ;t-mode
+                 [:t nil [:!n-mode :!o-mode :!d-mode :!m-mode]
+                  {:alone {:key :t :halt true} :delayed {:canceled {:key :t}} :held {:set ["t-mode" 1] :repeat false} :afterup {:set ["t-mode" 0]}}]
+
+                 ;o-mode
+                 [:o nil [:!n-mode :!t-mode :!d-mode :!m-mode]
+                  {:alone {:key :o :halt true} :delayed {:canceled {:key :o}} :held {:set ["o-mode" 1] :repeat false} :afterup {:set ["o-mode" 0]}}]
+
+                 ;d-mode
+                 [:d nil [:!n-mode :!t-mode :!o-mode :!m-mode]
+                  {:alone {:key :d :halt true} :delayed {:canceled {:key :d}} :held {:set ["d-mode" 1] :repeat false} :afterup {:set ["d-mode" 0]}}]
+
+                 ;m-mode
+                 [:m nil [:!n-mode :!t-mode :!o-mode :!d-mode]
+                  {:alone {:key :m :halt true} :delayed {:canceled {:key :m}} :held {:set ["m-mode" 1] :repeat false} :afterup {:set ["m-mode" 0]}}]
+                 ]
+         }
+
+        {
+         :des "n-mode"
+         :rules [
+                 :n-mode
+                 [:t [:notify "Pressed n - t"]]
+                 [:o [:notify "Pressed n - o"]]
+                 [:d [:notify "Pressed n - d"]]
+                 [:m [:notify "Pressed n - m"]]
+                 ]
+         }
+
+        {
+         :des "t-mode"
+         :rules [
+                 :t-mode
+                 [:n [:notify "Pressed t - n"]]
+                 [:o [:notify "Pressed t - o"]]
+                 [:d [:notify "Pressed t - d"]]
+                 [:m [:notify "Pressed t - m"]]
+                 ]
+         }
+
+        {
+         :des "o-mode"
+         :rules [
+                 :o-mode
+                 [:t [:notify "Pressed o - t"]]
+                 [:n [:notify "Pressed o - n"]]
+                 [:d [:notify "Pressed o - d"]]
+                 [:m [:notify "Pressed o - m"]]
+                 ]
+         }
+
+        {
+         :des "d-mode"
+         :rules [
+                 :d-mode
+                 [:t [:notify "Pressed d - t"]]
+                 [:n [:notify "Pressed d - n"]]
+                 [:o [:notify "Pressed d - o"]]
+                 [:m [:notify "Pressed d - m"]]
+                 ]
+         }
+
+        {
+         :des "m-mode"
+         :rules [
+                 :m-mode
+                 [:t [:notify "Pressed m - t"]]
+                 [:n [:notify "Pressed m - n"]]
+                 [:o [:notify "Pressed m - o"]]
+                 [:d [:notify "Pressed m - d"]]
+                 ]
+         }
+        ]
+ }
