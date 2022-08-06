@@ -1,0 +1,69 @@
+{ :profiles
+ {:Default {:default true
+
+            ; simultaneous_threshold_milliseconds (def: 50)
+            ; different from simlayers, this is for cases like [:a :b]
+            :sim     50
+
+            ; to_delayed_action_delay_milliseconds
+            ; NOTE: this should be equal to :held for mod-tap layers
+            :delay   210
+
+            ; to_if_held_down_threshold_milliseconds (def: 500)
+            ; NOTE: this should be equal to :delay for mod-tap layers
+            :held    210
+
+            ; to_if_alone_timeout_milliseconds (def: 1000)
+            ; NOTE: (i think) this must be just less than the delay / held value to avoid bug where mod-tap layer stays 1
+            :alone   209
+
+            ;you can set these delays individually in mod-tap layer definitions if you want separate default values here 
+            }}
+
+ :templates {
+             :open "open -a %s"
+             :link "osascript -e 'do shell script \"open %s\"'"
+             }
+
+ :main [ 
+        {:des "toggle omni-mode"
+         :rules [
+                 [:!!0 [ ["omni-mode" 1]] ["omni-mode" 0]] ;[:hs "drawIndicator('command')"]
+                 [:!!0 [ ["omni-mode" 0] ["internet-mode" 0] ["open-mode" 0]] ["omni-mode" 1]] ;[:hs "deleteIndicator()"]
+                 ]
+         }
+
+        {
+         ;NOTE: When adding a new layer, if you want it to be able to cross with an old one, you must add the name negated (:!new_name) to all other mod-tap layer conditions
+         ;also add it to the above f4 toggle off, so the variable state goes off
+
+         :des "mod-tap layers"
+         :rules [
+
+                 ;internet-mode
+                 [:i nil [:omni-mode :!open-mode]
+                  {:alone {:key :i :halt true} :delayed {:canceled {:key :i}} :held {:set ["internet-mode" 1] :repeat false} :afterup {:set ["internet-mode" 0]}}]
+
+                 ;open-mode
+                 [:o nil [:omni-mode :!internet-mode]
+                  {:alone {:key :o :halt true} :delayed {:canceled {:key :o}} :held {:set ["open-mode" 1] :repeat false} :afterup {:set ["open-mode" 0]}}]
+
+               ]
+         }
+
+        {:des "internet mode (websites)"
+         :rules [:internet-mode
+                 [:a [:link "https://www.amazon.com/"]]
+                 ]
+         }
+
+        {:des "open mode (apps)"
+         :rules [:open-mode
+                 [:c [:open "Calendar"]]
+                 [:s [:open "Safari"]]
+                 [:m [:open "Mail"]]
+                 ]
+         }
+
+      ]
+ }
