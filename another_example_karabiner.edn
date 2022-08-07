@@ -21,7 +21,7 @@
             }}
 
  :templates {
-             :open "open -a %s"
+             :open "open -a \"%s\""
              :link "osascript -e 'do shell script \"open %s\"'"
              }
 
