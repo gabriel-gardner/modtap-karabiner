@@ -35,7 +35,7 @@
 
         {
          ;NOTE: When adding a new layer, if you want it to be able to cross with an old one, you must add the name negated (:!new_name) to all other mod-tap layer conditions
-         ;also add it to the above f4 toggle off, so the variable state goes off
+         ;also add it to the above Ctrl+Cmd+Shift+Alt+0 toggle off, so the variable state goes off
 
          :des "mod-tap layers"
          :rules [
