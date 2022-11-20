@@ -2,7 +2,7 @@
 
 {
  :profiles {
-            :Default {
+            :goku {
                       :default true
 
                       ; simultaneous_threshold_milliseconds (def: 50)

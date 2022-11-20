@@ -1,5 +1,5 @@
 { :profiles
- {:Default {:default true
+ {:goku {:default true
 
             ; simultaneous_threshold_milliseconds (def: 50)
             ; different from simlayers, this is for cases like [:a :b]
